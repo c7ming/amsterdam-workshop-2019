@@ -1,0 +1,31 @@
+Examples of equivalent of template features in render functions.
+
+<script>
+const MyComponent = {
+  data () {
+    return {
+      list: [1, 2, 3]
+    }
+  },
+  render(h) {
+    // <div v-if="ok"></div>
+    return this.ok ? h('div') : null
+
+    // <ul><list v-for="i in list">{{ i }}</list></ul>
+    return h('ul', this.list.map(i => h('li', i)))
+
+    // <input v-model="foo">
+    // (simplified, does not cover all edge cases)
+    return h('input', {
+      domProps: {
+        value: this.foo
+      },
+      on: {
+        input: event => {
+          this.foo = event.target.value
+        }
+      }
+    })
+  }
+}
+</script>
