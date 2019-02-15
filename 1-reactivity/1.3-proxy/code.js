@@ -1,36 +1,6 @@
-Demo ES2015 Proxy-based observer implementation.
-Learn more about proxies:
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
+import { Dep, effect } from '../1.2-getter-setter/code.js'
 
-<div id="count"></div>
-<button onclick="state.count++">++</button>
-
-<script>
-let currentEffect
-
-class Dep {
-  constructor() {
-    this.subscribers = new Set()
-  }
-
-  depend() {
-    if (currentEffect) {
-      this.subscribers.add(currentEffect)
-    }
-  }
-
-  notify() {
-    this.subscribers.forEach(sub => {
-      sub()
-    })
-  }
-}
-
-function effect(runner) {
-  currentEffect = runner
-  runner()
-  currentEffect = null
-}
+export { effect }
 
 // ---
 const depsStorage = new WeakMap()
@@ -64,12 +34,13 @@ const handlers = {
     if (dep) {
       dep.notify()
     }
+    return true
   }
 }
 
 const observedValues = new WeakMap()
 
-function observable(obj) {
+export function observable(obj) {
   if (!obj || typeof obj !== 'object') {
     return obj
   }
@@ -81,18 +52,3 @@ function observable(obj) {
   observedValues.set(obj, observed)
   return observed
 }
-
-// property additions / deletions
-// array index / length mutations
-// Map / Set...
-
-const state = observable({
-  count: 0
-})
-
-effect(() => {
-  console.log(state.count)
-})
-
-state.count++
-</script>

@@ -1,16 +1,6 @@
-Demo ES5 getter/setter based observer implementation.
-Learn more about getter/setters and Object.defineProperty:
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
-
-<div id="count"></div>
-<button onclick="state.count++">++</button>
-
-<script>
-
-// fileA.js
 let currentEffect
 
-class Dep {
+export class Dep {
   constructor() {
     this.subscribers = new Set()
   }
@@ -28,15 +18,13 @@ class Dep {
   }
 }
 
-function effect(runner) {
+export function effect(runner) {
   currentEffect = runner
   runner()
   currentEffect = null
 }
 
-// ---
-
-function observable(obj) {
+export function observable(obj) {
   Object.keys(obj).forEach(key => {
     let value = observable(obj[key])
     const dep = new Dep()
@@ -55,18 +43,3 @@ function observable(obj) {
 
   return obj
 }
-
-// property additions / deletions
-// array index / length mutations
-// Map / Set...
-
-const state = observable({
-  count: 0
-})
-
-effect(() => {
-  document.getElementById('count').textContent = state.count
-})
-
-state.count++
-</script>
