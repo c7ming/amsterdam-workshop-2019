@@ -1,23 +1,21 @@
-A demo virtual DOM mounting algorithm.
-
-<div id="app"></div>
-
-<script>
-function h(tag, attrs, children) {
+export function h(tag, attrs, children) {
   return {
     tag,
     attrs,
-    children
+    children: children && children.map(c => {
+      if (typeof c === 'string') {
+        return {
+          text: c
+        }
+      } else {
+        return c
+      }
+    })
   }
 }
 
-const vdom = h('div', { id: 'foo' }, [
-  h('span', null, [this.msg]),
-  h('span', null, ['world'])
-])
-
-function mount(vdom, container) {
-  if (typeof vdom === 'string') {
+export function mount(vdom, container) {
+  if (vdom.text) {
     mountText(vdom, container)
   } else {
     mountElement(vdom, container)
@@ -28,6 +26,8 @@ function mountElement(vdom, container) {
   const { tag, attrs, children } = vdom
 
   const el = document.createElement(tag)
+
+  vdom.el = el
 
   if (attrs) {
     for (const key in attrs) {
@@ -45,9 +45,7 @@ function mountElement(vdom, container) {
 }
 
 function mountText(vdom, container) {
-  const text = document.createTextNode(vdom)
+  const text = document.createTextNode(vdom.text)
+  vdom.el = text
   container.appendChild(text)
 }
-
-mount(vdom, document.getElementById('app'))
-</script>
